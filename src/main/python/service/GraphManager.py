@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from TFFashionDetection.utils.CommonUtils import load_config
+from src.main.python.common.CommonUtils import load_config
 
 
 class GraphManagement:

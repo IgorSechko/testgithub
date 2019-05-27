@@ -4,11 +4,11 @@
 import os
 
 
-def write_config(MODEL_NAME):
+def write_config(model_name, root_dir, num_classes):
     config = ("""
         model {
           ssd {
-            num_classes: 3
+            num_classes: %(NUM_CLASSES)s
             box_coder {
               faster_rcnn_box_coder {
                 y_scale: 10.0
@@ -197,15 +197,16 @@ def write_config(MODEL_NAME):
           num_readers: 1
         }
         """ % {
-            'CHECKPOINT_FILE': os.path.join('/content', 'frozen_model', MODEL_NAME),
-            'ANNOTATIONS_DIR': os.path.join('/content', 'data_dir', 'annotations'),
-        }
-    )
-    config_path = os.path.join('/content', 'data_dir', 'tf_api.config')
+        'CHECKPOINT_FILE': os.path.join(root_dir, 'frozen_model', model_name),
+        'ANNOTATIONS_DIR': os.path.join(root_dir, 'data_dir', 'annotations'),
+        'NUM_CLASSES': num_classes
+    }
+              )
+    config_path = os.path.join(root_dir, 'data_dir', 'tf_api.config')
     with open(config_path, 'w') as f:
         f.write(config)
         print("Config written to %s\nCheckpoints in %s\nTrain data from %s" % (
             config_path,
-            os.path.join('/content', 'data_dir', 'checkpoints'),
-            os.path.join('/content', 'data_dir', 'annotations'))
-        )
+            os.path.join(root_dir, 'data_dir', 'checkpoints'),
+            os.path.join(root_dir, 'data_dir', 'annotations'))
+              )

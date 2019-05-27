@@ -1,11 +1,10 @@
 import os
-import shutil
-import sys
 
-from TFFashionDetection.data_preparator import DataPreparator
-from TFFashionDetection.utils.CommonUtils import load_config
-from TFFashionDetection.utils.download_tf_zoo_model import download_model
-from TFFashionDetection.utils.ssd_config import write_config
+from src.main.python.common.CommonUtils import load_config
+from src.main.python.common.FileUtils import clear_data_dir
+from src.main.python.common.data_preparator import DataPreparator
+from src.main.python.common.download_tf_zoo_model import download_model
+from src.main.python.common.ssd_config import write_config
 
 MODEL_NAME = "ssd_mobilenet_v2_coco_2018_03_29"
 ALLOWED_CATEGORIES = ['blazer', 'blouse', 'cardigan', 'hoodie', 'jacket', 'sweater', 'tank', 'tee',
@@ -21,7 +20,7 @@ class ModelManager:
         self.model_name = model_name
 
     def train(self):
-        self._clear_data_dir("{0}/data_dir/".format(self.root_dir))
+        clear_data_dir("{0}/data_dir/".format(self.root_dir))
         self._data_preparation()
         # Start training
         download_model(dest_dir=self.root_dir, model_name=self.model_name)
@@ -48,22 +47,6 @@ class ModelManager:
         python_script = "{0}; {1} {2} {3} {4}".format(export_path, train_script, log_error, pipeline_config, train_dir)
 
         return python_script
-
-    # todo abdrashitov (Production preparation stage) extract to common utils
-    @staticmethod
-    def _clear_data_dir(path_to_folder):
-        if not os.path.exists(path_to_folder):
-            return
-
-        for the_file in os.listdir(path_to_folder):
-            file_path = os.path.join(path_to_folder, the_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print(e)
 
 
 if __name__ == '__main__':
