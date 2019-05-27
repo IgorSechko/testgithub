@@ -11,8 +11,7 @@ from PIL import Image as Pil_image
 from lxml import etree
 from tqdm import tqdm
 
-from TFFashionDetection.utils.CommonUtils import load_config
-from models.research.object_detection.utils import dataset_util
+from src.main.python.common.tensorflow import dataset_util
 
 API_PATH = os.path.join('/content', 'models/research')
 sys.path.append(API_PATH)
@@ -25,9 +24,7 @@ class DataPreparator:
 
     def __init__(self, allowed_categories):
 
-        self.config = load_config()
-
-        self.root_dir = self.config['root_dir']
+        self.root_dir = os.environ.get("AIBUY_TENSORFLOW_ROOT_DIR")
         self.destination_dir = os.path.join(self.root_dir, 'data_dir')
         self.fashion_data = os.path.join(self.root_dir, 'fashion_data')
 
@@ -75,13 +72,15 @@ class DataPreparator:
 
         print("Reading list_category_cloth.txt...")
         clothes_to_category_file = os.path.join(self.fashion_data, "Anno/list_category_cloth.txt")
-        self.clothes_to_category = self.read_configuration_file(clothes_to_category_file, self.row_processors['list_category_cloth'])
+        self.clothes_to_category = self.read_configuration_file(clothes_to_category_file,
+                                                                self.row_processors['list_category_cloth'])
         self.clothes_to_category = {key: value for (key, value) in self.clothes_to_category.items() if
                                     key in self.allowed_categories}
 
         print("Reading list_category_img...")
         img_to_category_file = os.path.join(self.fashion_data, "Anno/list_category_img.txt")
-        self.img_to_category = self.read_configuration_file(img_to_category_file, self.row_processors['list_category_img'])
+        self.img_to_category = self.read_configuration_file(img_to_category_file,
+                                                            self.row_processors['list_category_img'])
 
         print("Reading list_eval_partion...")
         img_to_eval_file = os.path.join(self.fashion_data, "Eval/list_eval_partition.txt")
@@ -313,4 +312,3 @@ class DataPreparator:
 
     def get_category_count(self):
         return len(self.allowed_categories)
-

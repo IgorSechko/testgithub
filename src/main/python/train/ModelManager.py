@@ -1,10 +1,10 @@
 import os
 
-from src.main.python.common.CommonUtils import load_config
+from src.main.python.common.DataPreparator import DataPreparator
 from src.main.python.common.FileUtils import clear_data_dir
-from src.main.python.common.data_preparator import DataPreparator
+from src.main.python.common.download_pretrained_model import download_model
 from src.main.python.common.download_tf_zoo_model import download_model
-from src.main.python.common.ssd_config import write_config
+from src.main.python.common.tensorflow.ssd_config import write_config
 
 MODEL_NAME = "ssd_mobilenet_v2_coco_2018_03_29"
 ALLOWED_CATEGORIES = ['blazer', 'blouse', 'cardigan', 'hoodie', 'jacket', 'sweater', 'tank', 'tee',
@@ -14,8 +14,7 @@ ALLOWED_CATEGORIES = ['blazer', 'blouse', 'cardigan', 'hoodie', 'jacket', 'sweat
 class ModelManager:
 
     def __init__(self, allowed_category, model_name) -> None:
-        config = load_config()
-        self.root_dir = config['root_dir']
+        self.root_dir = os.environ.get("AIBUY_TENSORFLOW_ROOT_DIR")
         self.allowed_category = allowed_category
         self.model_name = model_name
 
@@ -27,12 +26,6 @@ class ModelManager:
         os.system(self._create_train_script())
 
     def _data_preparation(self):
-        # API_PATH = os.path.join(self.root_dir, 'models/research')
-        # sys.path.append(API_PATH)
-        #
-        # DETECTOR_PATH = os.path.join(self.root_dir, 'TFFashionDetection')
-        # sys.path.append(DETECTOR_PATH)
-
         data_preparator = DataPreparator(self.allowed_category)
         data_preparator.build()
         write_config(self.model_name, self.root_dir, data_preparator.get_category_count())

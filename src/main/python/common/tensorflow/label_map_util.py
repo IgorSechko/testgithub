@@ -19,7 +19,7 @@ import logging
 import tensorflow as tf
 from google.protobuf import text_format
 
-from src.main.python.common import string_int_label_map_pb2
+from src.main.python.common.tensorflow import string_int_label_map_pb2
 
 
 def validate_label_map(label_map):
