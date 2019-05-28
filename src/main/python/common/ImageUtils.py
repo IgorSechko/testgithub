@@ -1,9 +1,10 @@
 import os
+import random
 from io import BytesIO
 
 import numpy as np
 import requests
-from PIL import Image
+from PIL import Image, ImageDraw
 from PIL import Image as pil_image
 from keras.applications.vgg19 import preprocess_input
 from keras.preprocessing.image import img_to_array
@@ -37,9 +38,20 @@ def get_images_by_boxes(img, prediction_results):
     result = []
     for prediction in prediction_results:
         box_img = img.crop(box_to_area(prediction.box))
-        box_img.show()
+        draw_color = random_color()
+        draw = ImageDraw.Draw(img)
+        draw.rectangle(((prediction.box.x, prediction.box.y), (prediction.box.width, prediction.box.height)),
+                       outline=draw_color)
+        draw.text((prediction.box.x, prediction.box.y), prediction.category, fill=draw_color)
         result.append(box_img)
+    img.show()
     return result
+
+
+def random_color():
+    rgbl = [255, 0, 0]
+    random.shuffle(rgbl)
+    return '#{:02x}{:02x}{:02x}'.format(rgbl[0], rgbl[1], rgbl[2])
 
 
 def box_to_area(box):

@@ -1,14 +1,11 @@
 import datetime
 import os
 
-from src.main.python.common.CommonUtils import load_config
-
 
 class GraphManagement:
 
     def __init__(self) -> None:
-        config = load_config()
-        self.root_dir = config['root_dir']
+        self.root_dir = os.environ.get("AIBUY_TENSORFLOW_ROOT_DIR")
 
     def export(self, model_number):
         # Create graph from checkpoints
@@ -45,4 +42,4 @@ class GraphManagement:
 
 
 if __name__ == '__main__':
-    GraphManagement().export(model_number="11241")
+    GraphManagement().export(model_number="3128")

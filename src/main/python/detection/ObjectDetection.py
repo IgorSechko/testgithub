@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 from google.protobuf import text_format
 
-from src.main.python.common import string_int_label_map_pb2, label_map_util
-from src.main.python.common.label_map_util import validate_label_map
+from src.main.python.common.tensorflow import label_map_util, string_int_label_map_pb2
+from src.main.python.common.tensorflow.label_map_util import validate_label_map
 
 
 class ObjectDetection:
@@ -18,13 +18,8 @@ class ObjectDetection:
     def init_category(self):
         print("Init category...")
         label_map = label_map_util.load_labelmap(self.PATH_TO_LABELS)
-        # categories = label_map_util.convert_label_map_to_categories(
-        #     label_map,
-        #     max_num_classes=27,
-        #     use_display_name=True
-        # )
         self.category_index = [(item.id, item.name) for item in
-                               label_map.item]  # label_map_util.create_category_index(categories)
+                               label_map.item]
 
     def load_labelmap(self, path):
         """Loads label map proto.
@@ -88,6 +83,6 @@ class ObjectDetection:
                             })
                         except:
                             print("Wrong label file")
-        # возвращаем результат
+        # return result
         self.img_detections = img_detections
         return img_detections

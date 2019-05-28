@@ -23,7 +23,7 @@ class ObjectDetectionService:
     def _prediction(self, url_list):
         result = []
         for url, img in url_list:
-            predictions = self.object_detector.object_detection(img)[:2]
+            predictions = self.object_detector.object_detection(img)[:5]
             obj_detections = self._prepare_result(predictions, url)
             result.append((url, get_images_by_boxes(img, obj_detections)))
         return result
