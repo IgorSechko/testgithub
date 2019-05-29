@@ -22,11 +22,9 @@ logger = logging.getLogger(__name__)
 class DataPreparator:
     """Класс для подготовки DeepFashion датасета"""
 
-    def __init__(self, allowed_categories):
-
-        self.root_dir = os.environ.get("AIBUY_TENSORFLOW_ROOT_DIR")
-        self.destination_dir = os.path.join(self.root_dir, 'data_dir')
-        self.fashion_data = os.path.join(self.root_dir, 'fashion_data')
+    def __init__(self, data_dir, allowed_categories):
+        self.destination_dir = os.path.join(data_dir, 'data_dir')
+        self.fashion_data = os.path.join(data_dir, 'fashion_data')
 
         self.clothes_to_category = None
         self.img_to_category = None
