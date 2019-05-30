@@ -4,7 +4,7 @@
 import os
 
 
-def write_config(model_name, root_dir, num_classes):
+def write_config(model_name, data_dir, metadata_dir, num_classes):
     config = ("""
         model {
           ssd {
@@ -197,16 +197,16 @@ def write_config(model_name, root_dir, num_classes):
           num_readers: 1
         }
         """ % {
-        'CHECKPOINT_FILE': os.path.join(root_dir, 'frozen_model', model_name),
-        'ANNOTATIONS_DIR': os.path.join(root_dir, 'data_dir', 'annotations'),
+        'CHECKPOINT_FILE': os.path.join(data_dir, 'frozen_model', model_name),
+        'ANNOTATIONS_DIR': os.path.join(metadata_dir, 'annotations'),
         'NUM_CLASSES': num_classes
     }
               )
-    config_path = os.path.join(root_dir, 'data_dir', 'tf_api.config')
+    config_path = os.path.join(metadata_dir, 'tf_api.config')
     with open(config_path, 'w') as f:
         f.write(config)
         print("Config written to %s\nCheckpoints in %s\nTrain data from %s" % (
             config_path,
-            os.path.join(root_dir, 'data_dir', 'checkpoints'),
-            os.path.join(root_dir, 'data_dir', 'annotations'))
+            os.path.join(metadata_dir, 'checkpoints'),
+            os.path.join(metadata_dir, 'annotations'))
               )

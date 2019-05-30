@@ -1,7 +1,6 @@
 import io
 import logging
 import os
-import shutil
 import sys
 from collections import Counter
 
@@ -22,8 +21,8 @@ logger = logging.getLogger(__name__)
 class DataPreparator:
     """Класс для подготовки DeepFashion датасета"""
 
-    def __init__(self, data_dir, allowed_categories):
-        self.destination_dir = os.path.join(data_dir, 'data_dir')
+    def __init__(self, data_dir, metadata_dir, allowed_categories):
+        self.metadata_dir = metadata_dir
         self.fashion_data = os.path.join(data_dir, 'fashion_data')
 
         self.clothes_to_category = None
@@ -52,15 +51,13 @@ class DataPreparator:
         self.create_tf_records(['train', 'test'])  # ещё есть val
 
     def create_tf_dirs(self):
-        if os.path.exists(self.destination_dir):
-            return
-        os.mkdir(self.destination_dir)
-        os.mkdir(os.path.join(self.destination_dir, 'images'))
-        os.mkdir(os.path.join(self.destination_dir, 'annotations'))
-        os.mkdir(os.path.join(self.destination_dir, 'data'))
-        os.mkdir(os.path.join(self.destination_dir, 'checkpoints'))
-        print("Create directory %s" % os.path.join(self.destination_dir, 'data'))
-        os.mkdir(os.path.join(self.destination_dir, 'annotations', 'xmls'))
+        os.mkdir(self.metadata_dir)
+        os.mkdir(os.path.join(self.metadata_dir, 'images'))
+        os.mkdir(os.path.join(self.metadata_dir, 'annotations'))
+        os.mkdir(os.path.join(self.metadata_dir, 'data'))
+        os.mkdir(os.path.join(self.metadata_dir, 'checkpoints'))
+        os.mkdir(os.path.join(self.metadata_dir, 'annotations', 'xmls'))
+        print("Create metadata directory %s" % self.metadata_dir)
 
     def deep_fashion_data_structure(self):
         print("Reading Anno directory...")
@@ -269,8 +266,8 @@ class DataPreparator:
 
     def create_tf_records(self, scenarios):
         """Создаём XML описаниями"""
-        base_xml_path = os.path.join(self.destination_dir, 'annotations', 'xmls')
-        trainval_path = os.path.join(self.destination_dir, 'annotations', 'trainval.txt')
+        base_xml_path = os.path.join(self.metadata_dir, 'annotations', 'xmls')
+        trainval_path = os.path.join(self.metadata_dir, 'annotations', 'trainval.txt')
         # trainval должны быть все названия, его не перезаписываем
         trainval_file = open(trainval_path, 'a')
         for scenario in tqdm(scenarios, total=len(scenarios), desc="Create XML scenarios"):
@@ -278,7 +275,7 @@ class DataPreparator:
             self.generate_files_by_scenario(scenario, trainval_file, base_xml_path)
         trainval_file.close()
         # записываем файл с метками классов
-        label_map_path = os.path.join(self.destination_dir, 'annotations', 'label_map.pbtxt')
+        label_map_path = os.path.join(self.metadata_dir, 'annotations', 'label_map.pbtxt')
         label_map_file = open(label_map_path, 'w')
         for k, v in self.label_mapping.items():
             label_map_file.write("""item { id: %s name: '%s'}\n""" % (k, v))
@@ -288,7 +285,7 @@ class DataPreparator:
 
     def generate_files_by_scenario(self, scenario, trainval_descriptor, base_xml_path):
         """Генерим наборы файлов: XML+TFR"""
-        tfr_out_path = os.path.join(self.destination_dir, 'annotations', scenario + '.record')
+        tfr_out_path = os.path.join(self.metadata_dir, 'annotations', scenario + '.record')
         writer = tf.python_io.TFRecordWriter(tfr_out_path)
         img_keys = list(self.img_index.keys())
         np.random.shuffle(img_keys)
@@ -300,11 +297,11 @@ class DataPreparator:
                     xml_file.write(xml_example.decode("utf-8"))
                 writer.write(tf_example.SerializeToString())
                 trainval_descriptor.write(img_descr['filename'][:-4] + '\n')
-                # копируем изображение в директорию (пригодится для инференса)
-                shutil.copy(
-                    os.path.join(self.fashion_data, 'Img', img_path),
-                    os.path.join(self.destination_dir, 'images', img_descr['filename'])
-                )
+                # # копируем изображение в директорию (пригодится для инференса)
+                # shutil.copy(
+                #     os.path.join(self.fashion_data, 'Img', img_path),
+                #     os.path.join(self.metadata_dir, 'images', img_descr['filename'])
+                # )
         writer.close()
         print('TFRecords was created: %s' % tfr_out_path)
 
