@@ -157,21 +157,25 @@ class DataPreparator:
         self.img_index = balansed_img_index
 
     def get_img_descriptions(self, f_name, file_descr):
-        """Получаем описания обучающего примера: в виде XML и TFRecord"""
-        bbox = self.bboxes[f_name]
+        try:
+            """Получаем описания обучающего примера: в виде XML и TFRecord"""
+            bbox = self.bboxes[f_name]
 
-        filename = os.path.join(self.fashion_data, 'Img', f_name)
-        with tf.gfile.GFile(filename, 'rb') as fid:
-            encoded_jpg = fid.read()
-        encoded_jpg_io = io.BytesIO(encoded_jpg)
-        image = Pil_image.open(encoded_jpg_io)
+            filename = os.path.join(self.fashion_data, 'Img', f_name)
+            with tf.gfile.GFile(filename, 'rb') as fid:
+                encoded_jpg = fid.read()
+            encoded_jpg_io = io.BytesIO(encoded_jpg)
+            image = Pil_image.open(encoded_jpg_io)
 
-        img_shape = image.size + tuple([3])
+            img_shape = image.size + tuple([3])
 
-        tf_record = self.create_tf_example(file_descr, bbox, img_shape, encoded_jpg)
-        xml_record = self.create_xml_example(file_descr, bbox, img_shape)
+            tf_record = self.create_tf_example(file_descr, bbox, img_shape, encoded_jpg)
+            xml_record = self.create_xml_example(file_descr, bbox, img_shape)
 
-        return tf_record, xml_record
+            return tf_record, xml_record
+        except Exception as e:
+            print("Image does not exist {0}".format(e))
+            return None, None
 
     def create_tf_example(self, file_descr, bbox, img_shape, encoded_jpg):
         """создаём TFRecord для Tensorflow"""
@@ -293,15 +297,12 @@ class DataPreparator:
             img_descr = self.img_index[img_path]
             if img_descr['eval'] == scenario:
                 tf_example, xml_example = self.get_img_descriptions(img_path, img_descr)
-                with open(os.path.join(base_xml_path, img_descr['filename'][:-4] + '.xml'), 'w') as xml_file:
-                    xml_file.write(xml_example.decode("utf-8"))
-                writer.write(tf_example.SerializeToString())
-                trainval_descriptor.write(img_descr['filename'][:-4] + '\n')
-                # # копируем изображение в директорию (пригодится для инференса)
-                # shutil.copy(
-                #     os.path.join(self.fashion_data, 'Img', img_path),
-                #     os.path.join(self.metadata_dir, 'images', img_descr['filename'])
-                # )
+                if tf_example is not None:
+                    with open(os.path.join(base_xml_path, img_descr['filename'][:-4] + '.xml'), 'w') as xml_file:
+                        xml_file.write(xml_example.decode("utf-8"))
+                    writer.write(tf_example.SerializeToString())
+                    trainval_descriptor.write(img_descr['filename'][:-4] + '\n')
+
         writer.close()
         print('TFRecords was created: %s' % tfr_out_path)
 
