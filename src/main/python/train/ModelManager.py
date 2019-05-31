@@ -1,4 +1,3 @@
-import datetime
 import os
 
 from src.main.python.common.DataPreparator import DataPreparator
@@ -37,10 +36,7 @@ class ModelManager:
         train_script = "python {0}/models/research/object_detection/legacy/train.py".format(self.root_dir)
         log_error = "--logtostderr"
         pipeline_config = "--pipeline_config_path={0}/tf_api.config".format(self.metadata_dir)
-        now = datetime.datetime.now()
-        path_to_checkpoints = "{0}/checkpoints/{1}_{2}_{3}_{4}_{5}".format(self.root_dir, now.day, now.month,
-                                                                           now.year, now.hour, now.minute)
-        train_dir = "--train_dir={0}".format(path_to_checkpoints)
+        train_dir = "--train_dir={0}/checkpoints".format(self.metadata_dir)
         python_script = "{0}; {1} {2} {3} {4}".format(export_path, train_script, log_error, pipeline_config, train_dir)
 
         return python_script
