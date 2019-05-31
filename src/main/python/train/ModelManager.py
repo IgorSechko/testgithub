@@ -5,7 +5,7 @@ from src.main.python.common.FileUtils import clear_data_dir
 from src.main.python.common.download_pretrained_model import download_model
 from src.main.python.common.tensorflow.ssd_config import write_config
 
-MODEL_NAME = "faster_rcnn_inception_resnet_v2_atrous_coco_2018_01_28"
+MODEL_NAME = "ssd_mobilenet_v2_coco_2018_03_29"
 ALLOWED_CATEGORIES = ['tee', 'dress']
 
 
