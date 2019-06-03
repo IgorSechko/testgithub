@@ -1,7 +1,6 @@
 import os
 
 from src.main.python.common.DataPreparator import DataPreparator
-from src.main.python.common.FileUtils import clear_data_dir
 from src.main.python.common.download_pretrained_model import download_model
 from src.main.python.common.tensorflow.ssd_config import write_config
 
@@ -19,8 +18,8 @@ class ModelManager:
         self.model_name = model_name
 
     def train(self):
-        clear_data_dir(self.metadata_dir)
-        self._data_preparation()
+        # clear_data_dir(self.metadata_dir)
+        # self._data_preparation()
         # Start training
         download_model(dest_dir=self.data_dir, model_name=self.model_name)
         os.system(self._create_train_script())
@@ -33,7 +32,7 @@ class ModelManager:
     def _create_train_script(self):
         export_path = "export PYTHONPATH=$PYTHONPATH:{0}/models/research/slim:{0}/models/research/".format(
             self.root_dir)
-        train_script = "python {0}/models/research/object_detection/legacy/train.py".format(self.root_dir)
+        train_script = "python3 {0}/models/research/object_detection/legacy/train.py".format(self.root_dir)
         log_error = "--logtostderr"
         pipeline_config = "--pipeline_config_path={0}/tf_api.config".format(self.metadata_dir)
         train_dir = "--train_dir={0}/checkpoints".format(self.metadata_dir)
