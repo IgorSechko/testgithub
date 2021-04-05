@@ -1,0 +1,8 @@
+footwear_names_listdir.pt
+annoy_trees/
+csvs/
+datasets/cifar10/
+figures/
+tensors/
+visualized/
+venv/

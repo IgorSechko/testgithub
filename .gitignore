@@ -1,2 +1,10 @@
 /.idea
 *.iml
+src/main/footwear_names_listdir.pt
+src/main/annoy_trees/
+src/main/csvs/
+src/main/datasets/cifar10/
+src/main/figures/
+src/main/tensors/
+src/main/visualized/
+src/main/venv/

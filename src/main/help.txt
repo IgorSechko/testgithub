@@ -1,0 +1,15 @@
+The following files were used as a sandbox for experiments:
+    annoy_utils.py - easier saving and loading .ann
+    dim_embedding.py - dimensionality reduction
+    dim_reducers.py - get dim reducer by str name
+    eval_.py - copy of eval.py with some changes
+    exp_bar3d.py - attempt to plot 3d bar
+    exp_index_intersection.py - find k nearest neighbors of some specific item for several models and get intersection
+        of them (seems to reduce noise)
+    exp_nntraverser.py - in-depth and in-breadth nearest neighbor space traversal
+    exp_visualize_csv_nns.py - visualize csv 25 nearest neighbors for any item
+    save_layers.py - save layers of images to disk. One layer = one folder with images in it
+    scatter.py - scatter plot and pick image
+    test.py
+    testplotselect.py - plot and pick image
+    tree_map_to_dir.py - save images to tree directory structure
